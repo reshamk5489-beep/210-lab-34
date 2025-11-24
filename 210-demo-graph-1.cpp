@@ -120,7 +120,6 @@ public:
 
 int main()
 {
-    // Step 3 complete
     // Creates a vector of graph edges/weights
     vector<Edge> edges = {
         {0,1,8},{0,2,21},
@@ -158,3 +157,5 @@ int main()
 
     return 0;
 }
+
+// Step 3 complete
