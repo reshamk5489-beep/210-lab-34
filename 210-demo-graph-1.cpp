@@ -158,11 +158,57 @@ public:
             cout << start << " -> " << i << " : " << dist[i] << "\n";
         }
     }
+
+    // -------- Minimum Spanning Tree (Prim's algorithm) ----------
+    void minimumSpanningTree()
+    {
+        vector<int> key(SIZE, numeric_limits<int>::max());   // min weight to connect node
+        vector<int> parent(SIZE, -1);                        // stores MST edges
+        vector<bool> inMST(SIZE, false);                     // whether node is in MST
+
+        key[0] = 0; // start from node 0
+
+        for (int count = 0; count < SIZE - 1; count++)
+        {
+            // pick the minimum key node not in MST
+            int u = -1;
+            int minKey = numeric_limits<int>::max();
+            for (int v = 0; v < SIZE; v++)
+            {
+                if (!inMST[v] && key[v] < minKey)
+                {
+                    minKey = key[v];
+                    u = v;
+                }
+            }
+
+            inMST[u] = true;
+
+            // update key and parent for neighbors
+            for (auto &p : adjList[u])
+            {
+                int v = p.first;
+                int w = p.second;
+                if (!inMST[v] && w < key[v])
+                {
+                    key[v] = w;
+                    parent[v] = u;
+                }
+            }
+        }
+
+        cout << "Minimum Spanning Tree edges:\n";
+        for (int i = 1; i < SIZE; i++)
+        {
+            cout << "Edge from " << stationNames[parent[i]] << " to " << stationNames[i] 
+                 << " with capacity: " << key[i] << " units\n";
+        }
+    }
 };
 
 int main()
 {
-    // Step 4 complete
+    // Step 5 complete
     // Creates a vector of graph edges/weights
     vector<Edge> edges = {
         {0,1,8},{0,2,21},
@@ -189,7 +235,7 @@ int main()
     // Creates graph
     Graph graph(edges, stations);
 
-    graph.shortestPath(0);
+    graph.minimumSpanningTree();
 
     return 0;
 }
