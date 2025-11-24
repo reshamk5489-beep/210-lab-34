@@ -63,9 +63,9 @@ public:
         visited[v] = true; // mark current node as visited
         cout << v << " "; // print the node as part of traversal
     
-        // reverse iterate through adjacency list
-        for (int i = adjList[v].size() - 1; i >= 0; i--) {
-            int next = adjList[v][i].first; // get neighboring node
+        // iterate through adjacency list
+        for (auto &p : adjList[v]) {
+            int next = p.first; // get neighboring node
             if (!visited[next]) // visit only unvisited neighbors
                 DFSUtil(next, visited); // recursive DFS call
         }
