@@ -208,7 +208,6 @@ public:
 
 int main()
 {
-    // Step 5 complete
     // Creates a vector of graph edges/weights
     vector<Edge> edges = {
         {0,1,8},{0,2,21},
@@ -235,7 +234,29 @@ int main()
     // Creates graph
     Graph graph(edges, stations);
 
-    graph.minimumSpanningTree();
+    int choice;
+    do {
+        cout << "\nCity Transportation Network Menu:\n";
+        cout << "[1] Display network\n";
+        cout << "[2] Check travel paths (BFS)\n";
+        cout << "[3] Plan inspection route (DFS)\n";
+        cout << "[4] Calculate shortest paths\n";
+        cout << "[5] Find Minimum Spanning Tree\n";
+        cout << "[0] Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch(choice)
+        {
+            case 1: graph.printNetwork(); break;
+            case 2: graph.BFS(0); break;
+            case 3: graph.DFS(0); break;
+            case 4: graph.shortestPath(0); break;
+            case 5: graph.minimumSpanningTree(); break;
+            case 0: cout << "Exiting program.\n"; break;
+            default: cout << "Invalid choice! Try again.\n"; break;
+        }
+    } while(choice != 0);
 
     return 0;
 }
