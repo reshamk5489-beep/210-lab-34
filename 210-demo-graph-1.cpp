@@ -1,36 +1,38 @@
 #include <iostream>
 #include <vector>
+#include <string>
 using namespace std;
 
 const int SIZE = 9;
 
 struct Edge 
 {
-    int src, dest, weight;
+    int src, dest, weight; // weight = travel time in minutes
 };
 
-typedef pair<int, int> Pair; // Creates alias 'Pair' for the pair<int,int> data
+typedef pair<int,int> Pair; // Creates alias 'Pair' for the pair<int,int> data
 
 class Graph 
 {
 public:
-    // a vector of vectors of Pairs to represent an adjacency list
-    vector<vector<Pair>> adjList;
+    vector<vector<Pair>> adjList;      // a vector of vectors of Pairs to represent an adjacency list
+    vector<string> stationNames;        // names of stations
 
     // Graph Constructor
-    Graph(vector<Edge> const &edges) 
+    Graph(vector<Edge> const &edges, vector<string> const &names) 
     {
         // resize the vector to hold SIZE elements of type vector<Edge>
         adjList.resize(SIZE);
+        stationNames = names;
 
-         // add edges to the directed graph
+        // add edges to the undirected graph
         for (auto &edge : edges) 
         {
             int src = edge.src;
             int dest = edge.dest;
             int weight = edge.weight;
 
-             // insert at the end
+            // insert at the end
             adjList[src].push_back(make_pair(dest, weight));
 
             // for an undirected graph, add an edge from dest to src also
@@ -39,64 +41,86 @@ public:
     }
 
     // Print the graph's adjacency list
-    void printGraph() 
+    void printNetwork()
     {
-        cout << "Graph's adjacency list:\n";
-        for (int i = 0; i < adjList.size(); i++) 
+        cout << "City Transportation Network Topology:\n";
+        cout << "================================\n";
+        for (int i = 0; i < SIZE; i++)
         {
-            cout << i << " --> ";
-            for (Pair v : adjList[i])
-                cout << "(" << v.first << ", " << v.second << ") ";
-            cout << endl;
+            cout << stationNames[i] << " connects to:\n";
+            for (auto &p : adjList[i])
+            {
+                cout << "  → " << stationNames[p.first] << " (Travel time: " << p.second << " min)\n";
+            }
         }
+        cout << endl;
     }
 
     // -------- DFS ----------
-    void DFS(int start) 
+    void DFS(int start)
     {
         vector<bool> visited(SIZE, false); // tracks which nodes have been visited
-        DFSUtil(start, visited); // start recursive DFS
+        cout << "Network Trace (DFS) from " << stationNames[start] << ":\n";
+        cout << "Purpose: Tracing possible travel paths through the network        \n";
+        cout << "=======================================\n";
+        DFSUtil(start, visited);
+        cout << endl;
     }
 
-    void DFSUtil(int v, vector<bool>& visited) 
+    void DFSUtil(int v, vector<bool>& visited)
     {
         visited[v] = true; // mark current node as visited
-        cout << v << " "; // print the node as part of traversal
+        cout << "Inspecting " << stationNames[v] << "\n";
 
-         // reverse iterate through adjacency list so smaller-index neighbors print first
-        for (int i = adjList[v].size() - 1; i >= 0; i--) 
+        // reverse iterate through adjacency list so smaller-index neighbors print first
+        for (int i = adjList[v].size() - 1; i >= 0; i--)
         {
             int next = adjList[v][i].first; // get neighboring node
             if (!visited[next]) // visit only unvisited neighbors
+                cout << "  → Potential travel to " << stationNames[next] << " - Time: " << adjList[v][i].second << " min\n";
+        }
+
+        // recursive DFS call
+        for (int i = adjList[v].size() - 1; i >= 0; i--)
+        {
+            int next = adjList[v][i].first;
+            if (!visited[next])
                 DFSUtil(next, visited); // recursive DFS call
         }
     }
 
-    void BFS(int start) 
+    // -------- BFS ----------
+    void BFS(int start)
     {
         vector<bool> visited(SIZE, false);   // tracks visited nodes
         vector<int> q;                       // queue for BFS
         visited[start] = true;               // mark start as visited
         q.push_back(start);                  // enqueue start node
-    
+
+        cout << "\nLayer-by-Layer Network Inspection (BFS) from " << stationNames[start] << ":  \n";
+        cout << "Purpose: Analyzing service areas by distance from source\n";
+        cout << "=================================================\n";
+
         int index = 0;                       // index simulates queue front pointer
         while (index < q.size()) {           // loop until queue is empty
             int v = q[index++];              // dequeue
-            cout << v << " ";                // print current node
-    
+            cout << "Checking " << stationNames[v] << "\n";
+
             for (auto &p : adjList[v]) {     // explore neighbors
                 int next = p.first;
                 if (!visited[next]) {        // only enqueue unvisited nodes
                     visited[next] = true;
                     q.push_back(next);       // enqueue neighbor
+                    cout << "  → Next reachable station: " << stationNames[next] << " - Time: " << p.second << " min\n";
                 }
             }
         }
     }
 };
 
-int main() 
+int main()
 {
+    // Step 3 complete
     // Creates a vector of graph edges/weights
     vector<Edge> edges = {
         {0,1,8},{0,2,21},
@@ -107,29 +131,30 @@ int main()
         {6,7,3},{6,8,7}
     };
 
-    // Creates graph
-    Graph graph(edges);
+    // Names of stations for output
+    vector<string> stations = {
+        "Central Station",
+        "North Hub",
+        "East Terminal",
+        "South Station",
+        "West Terminal",
+        "Uptown Hub",
+        "Downtown Hub",
+        "Airport Station",
+        "Harbor Station"
+    };
 
-    // manually sorting each adjacency list to ensure correct traversal
-    graph.adjList[0] = {{1,8},{2,21}};
-    graph.adjList[1] = {{0,8},{2,6},{3,5},{4,4}};
-    graph.adjList[2] = {{0,21},{1,6},{7,11},{8,8}};
-    graph.adjList[3] = {{1,5},{4,9}};
-    graph.adjList[4] = {{1,4},{3,9}};
-    graph.adjList[5] = {{6,10},{7,15},{8,5}};
-    graph.adjList[6] = {{5,10},{7,3},{8,7}};
-    graph.adjList[7] = {{6,3},{5,15},{2,11}};
-    graph.adjList[8] = {{5,5},{6,7},{2,8}};
+    // Creates graph
+    Graph graph(edges, stations);
 
     // Prints adjacency list representation of graph
-    graph.printGraph();
+    graph.printNetwork();
 
-    cout << "DFS starting from vertex 0:\n";
+    cout << "DFS starting from Central Station:\n";
     graph.DFS(0);
 
-    cout << "\nBFS starting from vertex 0:\n";
+    cout << "\nBFS starting from Central Station:\n";
     graph.BFS(0);
-    cout << endl;
 
     return 0;
 }
