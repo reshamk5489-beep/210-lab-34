@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 const int SIZE = 9; // updated graph size
@@ -29,14 +30,16 @@ public:
             int weight = edge.weight;
 
             // insert at the end
-            adjList[src].push_back(make_pair(dest, weight));
-            // for an undirected graph, add an edge from dest to src also
-            adjList[dest].push_back(make_pair(src, weight));
+            adjList[src].push_back({dest, weight});
+            adjList[dest].push_back({src, weight});
         }
 
-        // --- fix neighbor order to match expected output ---
-        adjList[7] = {{6,3},{5,15},{2,11}};
-        adjList[8] = {{5,5},{6,7},{2,8}};
+        // Sort adjacency lists by neighbor index for consistent traversal
+        for (int i = 0; i < SIZE; i++) {
+            sort(adjList[i].begin(), adjList[i].end(), [](Pair a, Pair b) {
+                return a.first < b.first;
+            });
+        }
     }
 
     // Print the graph's adjacency list
@@ -60,7 +63,7 @@ public:
         visited[v] = true; // mark current node as visited
         cout << v << " "; // print the node as part of traversal
     
-        // reverse iterate through adjacency list so smaller-index neighbors print first
+        // reverse iterate through adjacency list
         for (int i = adjList[v].size() - 1; i >= 0; i--) {
             int next = adjList[v][i].first; // get neighboring node
             if (!visited[next]) // visit only unvisited neighbors
