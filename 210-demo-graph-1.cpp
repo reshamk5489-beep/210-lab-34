@@ -55,8 +55,10 @@ public:
     void DFSUtil(int v, vector<bool>& visited) {
         visited[v] = true;
         cout << v << " ";
-        for (auto &p : adjList[v]) {
-            int next = p.first;
+    
+        // reverse iterate
+        for (int i = adjList[v].size() - 1; i >= 0; i--) {
+            int next = adjList[v][i].first;
             if (!visited[next])
                 DFSUtil(next, visited);
         }
@@ -99,6 +101,12 @@ int main()
 
     // Prints adjacency list representation of graph
     graph.printGraph();
+
+    cout << "DFS starting from vertex 0:\n";
+    graph.DFS(0);
+
+    cout << "\nBFS starting from vertex 0:\n";
+    graph.BFS(0);
 
     return 0;
 }
