@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <queue>
+#include <limits>
 using namespace std;
 
 const int SIZE = 9;
@@ -116,10 +118,51 @@ public:
             }
         }
     }
+
+    // -------- Shortest Path (Dijkstra) ----------
+    void shortestPath(int start)
+    {
+        cout << "Shortest path from " << stationNames[start] << ":\n";
+
+        vector<int> dist(SIZE, numeric_limits<int>::max()); // stores shortest distances
+        dist[start] = 0;
+
+        // min-heap priority queue: pair(distance, vertex)
+        priority_queue<Pair, vector<Pair>, greater<Pair>> pq;
+        pq.push({0, start});
+
+        while (!pq.empty())
+        {
+            int u = pq.top().second;
+            int d = pq.top().first;
+            pq.pop();
+
+            if (d > dist[u]) continue;
+
+            for (auto &p : adjList[u])
+            {
+                int v = p.first;
+                int w = p.second;
+
+                if (dist[u] + w < dist[v])
+                {
+                    dist[v] = dist[u] + w;
+                    pq.push({dist[v], v});
+                }
+            }
+        }
+
+        // print shortest distances
+        for (int i = 0; i < SIZE; i++)
+        {
+            cout << start << " -> " << i << " : " << dist[i] << "\n";
+        }
+    }
 };
 
 int main()
 {
+    // Step 4 complete
     // Creates a vector of graph edges/weights
     vector<Edge> edges = {
         {0,1,8},{0,2,21},
@@ -146,16 +189,7 @@ int main()
     // Creates graph
     Graph graph(edges, stations);
 
-    // Prints adjacency list representation of graph
-    graph.printNetwork();
-
-    cout << "DFS starting from Central Station:\n";
-    graph.DFS(0);
-
-    cout << "\nBFS starting from Central Station:\n";
-    graph.BFS(0);
+    graph.shortestPath(0);
 
     return 0;
 }
-
-// Step 3 complete
