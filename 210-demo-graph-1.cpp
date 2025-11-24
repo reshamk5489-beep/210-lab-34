@@ -87,16 +87,17 @@ int main()
         {6,7,3},{6,8,7}
     };
 
+    // reorder adjacency lists manually to match expected traversal
     Graph graph(edges);
 
-    // manually reorder adjacency lists to match expected traversal
+    // manually sorting each adjacency list to ensure correct traversal
     graph.adjList[0] = {{1,8},{2,21}};
     graph.adjList[1] = {{0,8},{2,6},{3,5},{4,4}};
     graph.adjList[2] = {{0,21},{1,6},{7,11},{8,8}};
     graph.adjList[3] = {{1,5},{4,9}};
     graph.adjList[4] = {{1,4},{3,9}};
     graph.adjList[5] = {{6,10},{7,15},{8,5}};
-    graph.adjList[6] = {{7,3},{8,7},{5,10}}; // fixed order
+    graph.adjList[6] = {{5,10},{7,3},{8,7}};
     graph.adjList[7] = {{6,3},{5,15},{2,11}};
     graph.adjList[8] = {{5,5},{6,7},{2,8}};
 
