@@ -48,39 +48,39 @@ public:
 
     // -------- DFS ----------
     void DFS(int start) {
-        vector<bool> visited(SIZE, false);
-        DFSUtil(start, visited);
+        vector<bool> visited(SIZE, false); // tracks which nodes have been visited
+        DFSUtil(start, visited); // start recursive DFS
     }
 
     void DFSUtil(int v, vector<bool>& visited) {
-        visited[v] = true;
-        cout << v << " ";
+        visited[v] = true; // mark current node as visited
+        cout << v << " "; // print the node as part of traversal
     
-        // reverse iterate
-        for (int i = adjList[v].size() - 1; i >= 0; i--) {
-            int next = adjList[v][i].first;
-            if (!visited[next])
-                DFSUtil(next, visited);
+    // reverse iterate through adjacency list so smaller-index neighbors print first
+    for (int i = adjList[v].size() - 1; i >= 0; i--) {
+            int next = adjList[v][i].first; // get neighboring node
+            if (!visited[next]) // visit only unvisited neighbors
+                DFSUtil(next, visited); // recursive DFS call
         }
     }
 
-    // -------- BFS ----------
-    void BFS(int start) {
-        vector<bool> visited(SIZE, false);
-        vector<int> q;
-        visited[start] = true;
-        q.push_back(start);
-
-        int index = 0;
-        while (index < q.size()) {
-            int v = q[index++];
-            cout << v << " ";
-
-            for (auto &p : adjList[v]) {
+    void BFS(int start) 
+    {
+        vector<bool> visited(SIZE, false);   // tracks visited nodes
+        vector<int> q;                       // queue for BFS
+        visited[start] = true;               // mark start as visited
+        q.push_back(start);                  // enqueue start node
+    
+        int index = 0;                       // index simulates queue front pointer
+        while (index < q.size()) {           // loop until queue is empty
+            int v = q[index++];              // dequeue
+            cout << v << " ";                // print current node
+    
+            for (auto &p : adjList[v]) {     // explore neighbors
                 int next = p.first;
-                if (!visited[next]) {
+                if (!visited[next]) {        // only enqueue unvisited nodes
                     visited[next] = true;
-                    q.push_back(next);
+                    q.push_back(next);       // enqueue neighbor
                 }
             }
         }
@@ -107,6 +107,7 @@ int main()
 
     cout << "\nBFS starting from vertex 0:\n";
     graph.BFS(0);
+    cout << endl;
 
     return 0;
 }
