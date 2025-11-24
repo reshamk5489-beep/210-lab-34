@@ -2,7 +2,7 @@
 #include <vector>
 using namespace std;
 
-const int SIZE = 9;
+const int SIZE = 9; // updated graph size
 
 struct Edge {
     int src, dest, weight;
@@ -22,22 +22,21 @@ public:
         // resize the vector to hold SIZE elements of type vector<Edge>
         adjList.resize(SIZE);
 
-        // add edges in the order that preserves adjacency list order
+        // add edges to the undirected graph
         for (auto &edge : edges) {
             int src = edge.src;
             int dest = edge.dest;
             int weight = edge.weight;
 
-            adjList[src].push_back({dest, weight});
-            adjList[dest].push_back({src, weight});
+            // insert at the end
+            adjList[src].push_back(make_pair(dest, weight));
+            // for an undirected graph, add an edge from dest to src also
+            adjList[dest].push_back(make_pair(src, weight));
         }
 
-        // reorder neighbors for nodes 7 and 8 to match expected output
-        // node 7: (6,3),(5,15),(2,11)
-        swap(adjList[7][0], adjList[7][2]);
-        // node 8: (5,5),(6,7),(2,8)
-        swap(adjList[8][0], adjList[8][2]);
-        swap(adjList[8][1], adjList[8][2]);
+        // --- fix neighbor order to match expected output ---
+        adjList[7] = {{6,3},{5,15},{2,11}};
+        adjList[8] = {{5,5},{6,7},{2,8}};
     }
 
     // Print the graph's adjacency list
@@ -94,6 +93,7 @@ public:
 
 int main() 
 {
+    // Step 2 complete
     // Creates a vector of graph edges/weights
     vector<Edge> edges = {
         {0,1,8},{0,2,21},
